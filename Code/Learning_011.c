@@ -15,9 +15,9 @@ typedef struct StackNode {
 } StackNode, LinkStack;
 
 LinkStack *InitStack(); //初始化一个空栈
-LinkStack *Push(LinkStack *S, int a);
+void Push(LinkStack **S, int a);
 
-LinkStack *Pop(LinkStack *S);
+void Pop(LinkStack **S);
 
 int GetTop(const LinkStack *S);
 
@@ -34,11 +34,11 @@ int main() {
     for (int i = 0; i < n; ++i) {
         printf("The number %d:\n", i + 1);
         scanf("%d", &a);
-        S = Push(S, a);
+        Push(&S, a);
     }
     StackTraverse(S);
     printf("\nPop the top %d.\n", GetTop(S));
-    S = Pop(S);
+    Pop(&S);
     StackTraverse(S);
     return 0;
 }
@@ -51,28 +51,25 @@ LinkStack *InitStack() {
     return S;
 }
 
-LinkStack *Push(LinkStack *S, int a) {
+void Push(LinkStack **S, int a) {
     StackNode *p = (StackNode *) malloc(sizeof(StackNode));
     if (!p) {
         printf("Push failure.\n");
     } else {
         p->a = a;
-        p->next = S;
-        S = p;
+        p->next = *S;
+        *S = p;
         printf("Push %d.\n", a);
-        return S;
     }
 }
 
-LinkStack *Pop(LinkStack *S) {
+void Pop(LinkStack **S) {
     if (!S) {
         printf("Stack is empty. Return 0.\n");
-        return NULL;
     } else {
-        StackNode *p = S;
-        S = p->next;
+        StackNode *p = *S;
+        *S = p->next;
         free(p);
-        return S;
     }
 }
 
