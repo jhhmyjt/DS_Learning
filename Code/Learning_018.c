@@ -18,14 +18,22 @@ void PreBuildBiTree(BiTree **B);  //先序构建二叉树
 void InOrderTraverse(const BiTree *B);//中序遍历
 void PreOrderTraverse(const BiTree *B);//先序遍历
 void PostOrderTraverse(const BiTree *B);//后序遍历
+void Copy(const BiTree*B,BiTree** newB);//复制二叉树
+int Depth(const BiTree*B);              //计算二叉树深度
+int NodeCount(const BiTree*B);          //计算二叉树结点a
+int LeadCount(const BiTree*B);          //计算二叉树叶子结点数
 
 int main() {
-    BiTree *B;
-    B = InitBiTree();
+    BiTree *B=InitBiTree();
+    BiTree *B2=InitBiTree();
     printf("Build BiTree:\n");
     PreBuildBiTree(&B);
     printf("Traverse BiTree:\n");
     PreOrderTraverse(B);
+    printf("\nCopy the tree.\n");
+    Copy(B,&B2);
+    PreOrderTraverse(B2);
+    printf("\nTree B, Depth: %d, Node: %d, LeadNode:%d.\n", Depth(B), NodeCount(B), LeadCount(B));
     return 0;
 }
 
@@ -92,5 +100,58 @@ void PreBuildBiTree(BiTree **B) {
         printf("Add %c\n", (*B)->a);
         PreBuildBiTree(&((*B)->lChild));
         PreBuildBiTree(&((*B)->rChild));
+    }
+}
+
+//复制二叉树
+void Copy(const BiTree*B,BiTree** newB){
+    if(!B){
+        //B为空，递归结束
+        *newB=NULL;
+    } else{
+        (*newB)=(BiTree*) malloc(sizeof (BiTree));
+        (*newB)->a=B->a;
+        Copy(B->lChild,&((*newB)->lChild));
+        Copy(B->rChild,&((*newB)->rChild));
+    }
+}
+
+//计算二叉树深度
+int Depth(const BiTree*B){
+    //使用递归计算深度
+    //使用后序遍历顺序，先计算两个子树深度，最后取深度大的加上根的深度1
+    if(!B){
+        return 0;
+    } else{
+        int m,n;
+        m= Depth(B->lChild);
+        n= Depth(B->rChild);
+        if(m>n){
+            return m+1;
+        } else{
+            return n+1;
+        }
+    }
+}
+
+//计算二叉树结点
+int NodeCount(const BiTree*B){
+    if(!B){
+        return 0;
+    } else{
+        //左根+左子树结点数+右子树结点数，先序遍历顺序
+        return 1+ NodeCount(B->lChild)+ NodeCount(B->rChild);
+    }
+}
+
+//计算二叉树叶子结点数
+int LeadCount(const BiTree*B){
+    if(!B){
+        return 0;
+    }
+    if(B->rChild==NULL&&B->lChild==NULL){
+        return 1;
+    } else{
+        return LeadCount(B->rChild)+ LeadCount(B->lChild);
     }
 }
