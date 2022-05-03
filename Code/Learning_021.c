@@ -27,11 +27,15 @@ typedef struct {
 void CreateUDG(ALGraph *G);
 
 void ShowUDG(const ALGraph *G);
+void DFSTraverse(ALGraph* G,int v);
+void DFS(ALGraph*G,int v,int* visited);
 
 int main() {
     ALGraph G;
     CreateUDG(&G);
     ShowUDG(&G);
+    //从第0号顶点进行遍历
+    DFSTraverse(&G,0);
     return 0;
 }
 
@@ -89,5 +93,28 @@ void ShowUDG(const ALGraph *G) {
             printf("Vertex index:%d\tWeigth:%d\n", p->adjvex, p->weigth);
             p = p->nextArc;
         }
+    }
+}
+
+void DFSTraverse(ALGraph* G,int v){
+    //初始化标记数组，标记顶点是否被访问
+    int *visited=(int*) malloc(sizeof (int)*(G->vexNum));
+    for (int i = 0; i < G->vexNum; ++i) {
+        visited[i]=0;   //0标志该顶点未被访问
+    }
+    //进行DFS遍历
+    DFS(G,v,visited);
+}
+
+void DFS(ALGraph*G,int v,int* visited){
+    printf("Vertex %d, value:%d\n",v+1,G->adjList[v].data);
+    visited[v]=1;   //访问顶点后设置标记数组
+    //对该顶点的邻接顶点进行遍历，查找未被访问的顶点
+    ArcNode *p=G->adjList[v].firstArc;
+    while (p){
+        if(visited[p->adjvex]==0){
+            DFS(G,p->adjvex,visited);
+        }
+        p=p->nextArc;
     }
 }
